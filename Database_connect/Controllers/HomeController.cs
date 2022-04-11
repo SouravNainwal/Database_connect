@@ -1,12 +1,14 @@
 ﻿using Database_connect.db_context;
 using Database_connect.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+
 
 namespace Database_connect.Controllers
 {
@@ -21,10 +23,24 @@ namespace Database_connect.Controllers
         public IActionResult tables()
         {
             EmployeeContext obj = new EmployeeContext();
+            List<EmployeeClass> empobj = new List<EmployeeClass>();
             var res = obj.EmpDetails.ToList();
 
-            return View(res);
-            
+            foreach (var item in res)
+            {
+                empobj.Add(new EmployeeClass
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    EmailId = item.EmailId,
+                    PhoneNo= item.PhoneNo,
+                });
+
+
+            }
+
+            return View(empobj);
+
         }
         [HttpGet]
         public IActionResult SetTable()
@@ -37,23 +53,27 @@ namespace Database_connect.Controllers
             EmployeeContext obj = new EmployeeContext();
             EmpDetail cbj = new EmpDetail();
 
+            cbj.Id = obcj.Id;
             cbj.Name = obcj.Name;
             cbj.EmailId=obcj.EmailId;
             cbj.PhoneNo= obcj.PhoneNo;
-            //if (obcj.Id == 0)
-            //{
+            if (obcj.Id == 0)
+            {
                 obj.EmpDetails.Add(cbj);
                 obj.SaveChanges();
-            //}
-            //else
-            //{
+                
+            }
+            else
+            {
 
-            //    obj.Entry(cbj).State = System.Data.Entity.EntityState.Modified;
-            //    obj.SaveChanges();
-            //}
+                obj.Entry(cbj).State = EntityState.Modified;
+                obj.SaveChanges();
+                
+            }
+            return RedirectToAction("privacy");
 
-            //return RedirectToAction("tables");
-            return View();
+
+            //return View();
         }
         public IActionResult Delete(int id)
         {
@@ -61,27 +81,26 @@ namespace Database_connect.Controllers
             var deleteitem = Db.EmpDetails.Where(m => m.Id == id).First();
             Db.EmpDetails.Remove(deleteitem);
             Db.SaveChanges();
-            return RedirectToAction("tables");
-            
+            return RedirectToAction("tables");            
         }
 
-        //public IActionResult edit(int id)
-        //{
+        public IActionResult edit(int id)
+        {
 
-        //    EmployeeClass objEmp = new EmployeeClass();
-        //    EmployeeContext Db = new EmployeeContext();
-        //        var EditItem = Db.EmpDetails.Where(m => m.Id == id).First();
+            EmployeeClass objEmp = new EmployeeClass();
+            EmployeeContext Db = new EmployeeContext();
+            var editItem = Db.EmpDetails.Where(m => m.Id == id).First();
 
-        //        objEmp.Id = EditItem.Id;
-        //        objEmp.Name = EditItem.Name;
-        //        objEmp.EmailId = EditItem.EmailId;
-        //        objEmp.PhoneNo = EditItem.PhoneNo;
-                
+            objEmp.Id = editItem.Id;
+            objEmp.Name = editItem.Name;
+            objEmp.EmailId = editItem.EmailId;
+            objEmp.PhoneNo = editItem.PhoneNo;
 
-        //        ViewBag.Id = EditItem.Id;
 
-        //        return View("SetTable", objEmp);
-        //    }
+            //ViewBag.Id = EditItem.Id;
+
+            return View("SetTable", objEmp);
+        }
 
         public IActionResult Index()
         {

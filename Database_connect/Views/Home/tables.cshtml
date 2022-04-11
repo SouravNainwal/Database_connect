@@ -1,8 +1,6 @@
-﻿@model IEnumerable<Database_connect.db_context.EmpDetail>
+﻿@model List<Database_connect.Models.EmployeeClass>
 
-@{
-    ViewData["Title"] = "tables";
-}
+
 
 <h1>tables</h1>
 
@@ -13,13 +11,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                ID
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EmailId)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PhoneNo)
+               EmailId
+            </th>
+            <th>
+              PhoneNo
             </th>
             <th></th>
         </tr>
@@ -27,6 +28,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+             <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -37,7 +41,7 @@
                 @Html.DisplayFor(modelItem => item.PhoneNo)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> ||
+                <a asp-action="edit" asp-route-id="@item.Id">Edit</a> ||
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
